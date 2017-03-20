@@ -393,9 +393,6 @@ def makevm(name_id):
     content = request.json
     my_request = json.dumps(content)
 
-
-
-    #print json.loads(str(content))
     app.logger.info('Username {0}, passwd:{1}, diskspace:{2}, service:{3}'.format(content['username'],
                                                                                   content['password'],
                                                                                   content['options']['diskspace'],
@@ -513,7 +510,6 @@ def makevm(name_id):
         privileged = False
         internal_port = parser.config_params('images')['sftp_internal_port'].split()
 
-
     new_container = docker_create(name_id, content['username'], content['password'], content['options']['service'],
                       content['options']['diskspace'], image_name, internal_port, exec_this, cap_value, privileged,
                                   plex_secret_token, plex_server_name)
@@ -537,7 +533,6 @@ def version():
     try:
         if request.method == 'GET':
             my_docker_is = make_connection.connect.version()
-            #return render_template('version.html', my_docker_is=my_docker_is)
             return jsonify(my_docker_is)
     except:
         raise InvalidUsage('Issues with the server', status_code=503)
@@ -553,7 +548,6 @@ def query(name):
     """
     try:
         result_search = make_connection.connect.search(name)
-        print result_search
         return Response(json.dumps(result_search[:2]), mimetype='application/json')
     except:
         raise InvalidUsage('Issues with the server', status_code=503)
