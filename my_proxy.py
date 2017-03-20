@@ -5,15 +5,13 @@ import connect_docker_server as make_connection
 import config_parser as parser
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import exists
-import random_generator as random_excluded_special_list
-import string
+import random_generator as random_generator_function
 import json
 from functools import wraps
 import validate_hostname as validatehostname
 from werkzeug.security import generate_password_hash
 from sqlalchemy import text
 import volume_size as volumesize
-import random
 
 
 app = Flask(__name__)
@@ -138,11 +136,11 @@ def give_me_something_unique(name_of_container, hostname, owner, password, servi
     :rtype : object
     """
     # generate random port
-    new_port = random_excluded_special_list.rand()
+    new_port = random_generator_function.rand_port()
     if db.session.query(exists().where(ContainerNames.public_port == new_port)).scalar():
         app.logger.info('there is a port assigned already, try to make a new one')
         try:
-            new_port = random.randrange(1025, 65000, 2)
+            new_port = random_generator_function.rand_port()
             app.logger.info('try to insert, if working we god, if not we try again in excepetion')
             db.session.add(
                 ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
@@ -150,7 +148,7 @@ def give_me_something_unique(name_of_container, hostname, owner, password, servi
             db.session.commit()
         except:
             app.logger.info('again we failed, we try again')
-            new_port = random.randrange(1025, 65000, 2)
+            new_port = random_generator_function.rand_port()
             db.session.add(
                 ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
                                new_port, service_name))
@@ -177,7 +175,7 @@ def give_me_mount_point(owner, size_plan):
         return new_volume_str[21:]
     else:
         # seems this is a new user and we will create a new mount point for him
-        my_random = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+        my_random = random_generator_function.rand_volume()
         size = 'size=' + size_plan
         # this will create a new volume
         new_volume = make_connection.connect_docker_server().create_volume(name=owner + my_random, driver='local',
@@ -332,7 +330,6 @@ def management(container_id):
     curl -i -H 'secretkey:1234' -H "Content-Type: application/json" -X POST -d
     '{"action":"start" }' http://localhost:5000/api/seedboxes/management/b90ea5517564
     :param container_id:
-    :param timeout:
     :return:
     """
     content = request.json
@@ -601,7 +598,6 @@ def showstuff():
 @require_appkey
 def killuser():
     """
-    :param user_name:
     :return:
     this function will delete all user containers and volume attached to the containers
     """
