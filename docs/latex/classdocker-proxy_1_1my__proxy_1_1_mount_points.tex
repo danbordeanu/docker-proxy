@@ -1,0 +1,123 @@
+\hypertarget{classdocker-proxy_1_1my__proxy_1_1_mount_points}{}\section{docker-\/proxy.my\+\_\+proxy.\+Mount\+Points Class Reference}
+\label{classdocker-proxy_1_1my__proxy_1_1_mount_points}\index{docker-\/proxy.\+my\+\_\+proxy.\+Mount\+Points@{docker-\/proxy.\+my\+\_\+proxy.\+Mount\+Points}}
+Inheritance diagram for docker-\/proxy.my\+\_\+proxy.\+Mount\+Points\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classdocker-proxy_1_1my__proxy_1_1_mount_points}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points_a559b6a122b5406dda695f40dc5eda8e9}{\+\_\+\+\_\+init\+\_\+\+\_\+} (self, \hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points_aa49cde7530c0edaec96a4407707e714d}{owner}, \hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points_aa7cfbe6eb066a60a4b6a0399fc64e003}{mount\+\_\+point}, \hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points_aec1c878c659bd308f99b529d397d85c7}{volume\+\_\+name}, \hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points_a6008b3f58ac2dd027f1d637cc84ee78c}{size\+\_\+plan})
+\item 
+def \hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points_aea56d9596b2864b4d089b0f34744f3f4}{\+\_\+\+\_\+repr\+\_\+\+\_\+} (self)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points_a17378df4d222e5d86f97d966e5ba30ee}{id} = db.\+Column(db.\+Integer, primary\+\_\+key=True, autoincrement=True)
+\item 
+\hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points_aa49cde7530c0edaec96a4407707e714d}{owner} = db.\+Column(db.\+String(80), unique=True)
+\item 
+\hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points_aa7cfbe6eb066a60a4b6a0399fc64e003}{mount\+\_\+point} = db.\+Column(db.\+String(200))
+\item 
+\hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points_aec1c878c659bd308f99b529d397d85c7}{volume\+\_\+name} = db.\+Column(db.\+String(200))
+\item 
+\hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points_a6008b3f58ac2dd027f1d637cc84ee78c}{size\+\_\+plan} = db.\+Column(db.\+String(80))
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyVerb}let's create the mount points table
+\end{DoxyVerb}
+ 
+
+Definition at line 73 of file my\+\_\+proxy.\+py.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classdocker-proxy_1_1my__proxy_1_1_mount_points_a559b6a122b5406dda695f40dc5eda8e9}{}\label{classdocker-proxy_1_1my__proxy_1_1_mount_points_a559b6a122b5406dda695f40dc5eda8e9} 
+\index{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}!\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+init\+\_\+\+\_\+@{\+\_\+\+\_\+init\+\_\+\+\_\+}!docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+init\+\_\+\+\_\+()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+Mount\+Points.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{}]{owner,  }\item[{}]{mount\+\_\+point,  }\item[{}]{volume\+\_\+name,  }\item[{}]{size\+\_\+plan }\end{DoxyParamCaption})}
+
+
+
+Definition at line 84 of file my\+\_\+proxy.\+py.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classdocker-proxy_1_1my__proxy_1_1_mount_points_aea56d9596b2864b4d089b0f34744f3f4}{}\label{classdocker-proxy_1_1my__proxy_1_1_mount_points_aea56d9596b2864b4d089b0f34744f3f4} 
+\index{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}!\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}}
+\index{\+\_\+\+\_\+repr\+\_\+\+\_\+@{\+\_\+\+\_\+repr\+\_\+\+\_\+}!docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}}
+\subsubsection{\texorpdfstring{\+\_\+\+\_\+repr\+\_\+\+\_\+()}{\_\_repr\_\_()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+Mount\+Points.\+\_\+\+\_\+repr\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}return only the mount point
+\end{DoxyVerb}
+ 
+
+Definition at line 90 of file my\+\_\+proxy.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classdocker-proxy_1_1my__proxy_1_1_mount_points_a17378df4d222e5d86f97d966e5ba30ee}{}\label{classdocker-proxy_1_1my__proxy_1_1_mount_points_a17378df4d222e5d86f97d966e5ba30ee} 
+\index{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}!id@{id}}
+\index{id@{id}!docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}}
+\subsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily docker-\/proxy.\+my\+\_\+proxy.\+Mount\+Points.\+id = db.\+Column(db.\+Integer, primary\+\_\+key=True, autoincrement=True)\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 78 of file my\+\_\+proxy.\+py.
+
+\hypertarget{classdocker-proxy_1_1my__proxy_1_1_mount_points_aa7cfbe6eb066a60a4b6a0399fc64e003}{}\label{classdocker-proxy_1_1my__proxy_1_1_mount_points_aa7cfbe6eb066a60a4b6a0399fc64e003} 
+\index{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}!mount\+\_\+point@{mount\+\_\+point}}
+\index{mount\+\_\+point@{mount\+\_\+point}!docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}}
+\subsubsection{\texorpdfstring{mount\+\_\+point}{mount\_point}}
+{\footnotesize\ttfamily docker-\/proxy.\+my\+\_\+proxy.\+Mount\+Points.\+mount\+\_\+point = db.\+Column(db.\+String(200))\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 80 of file my\+\_\+proxy.\+py.
+
+\hypertarget{classdocker-proxy_1_1my__proxy_1_1_mount_points_aa49cde7530c0edaec96a4407707e714d}{}\label{classdocker-proxy_1_1my__proxy_1_1_mount_points_aa49cde7530c0edaec96a4407707e714d} 
+\index{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}!owner@{owner}}
+\index{owner@{owner}!docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}}
+\subsubsection{\texorpdfstring{owner}{owner}}
+{\footnotesize\ttfamily docker-\/proxy.\+my\+\_\+proxy.\+Mount\+Points.\+owner = db.\+Column(db.\+String(80), unique=True)\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 79 of file my\+\_\+proxy.\+py.
+
+\hypertarget{classdocker-proxy_1_1my__proxy_1_1_mount_points_a6008b3f58ac2dd027f1d637cc84ee78c}{}\label{classdocker-proxy_1_1my__proxy_1_1_mount_points_a6008b3f58ac2dd027f1d637cc84ee78c} 
+\index{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}!size\+\_\+plan@{size\+\_\+plan}}
+\index{size\+\_\+plan@{size\+\_\+plan}!docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}}
+\subsubsection{\texorpdfstring{size\+\_\+plan}{size\_plan}}
+{\footnotesize\ttfamily docker-\/proxy.\+my\+\_\+proxy.\+Mount\+Points.\+size\+\_\+plan = db.\+Column(db.\+String(80))\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 82 of file my\+\_\+proxy.\+py.
+
+\hypertarget{classdocker-proxy_1_1my__proxy_1_1_mount_points_aec1c878c659bd308f99b529d397d85c7}{}\label{classdocker-proxy_1_1my__proxy_1_1_mount_points_aec1c878c659bd308f99b529d397d85c7} 
+\index{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}!volume\+\_\+name@{volume\+\_\+name}}
+\index{volume\+\_\+name@{volume\+\_\+name}!docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points@{docker-\/proxy\+::my\+\_\+proxy\+::\+Mount\+Points}}
+\subsubsection{\texorpdfstring{volume\+\_\+name}{volume\_name}}
+{\footnotesize\ttfamily docker-\/proxy.\+my\+\_\+proxy.\+Mount\+Points.\+volume\+\_\+name = db.\+Column(db.\+String(200))\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line 81 of file my\+\_\+proxy.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{my__proxy_8py}{my\+\_\+proxy.\+py}\end{DoxyCompactItemize}

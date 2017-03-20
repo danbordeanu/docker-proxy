@@ -1,0 +1,302 @@
+\hypertarget{namespacedocker-proxy_1_1my__proxy}{}\section{docker-\/proxy.my\+\_\+proxy Namespace Reference}
+\label{namespacedocker-proxy_1_1my__proxy}\index{docker-\/proxy.\+my\+\_\+proxy@{docker-\/proxy.\+my\+\_\+proxy}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classdocker-proxy_1_1my__proxy_1_1_container_names}{Container\+Names}
+\item 
+class \hyperlink{classdocker-proxy_1_1my__proxy_1_1_invalid_usage}{Invalid\+Usage}
+\item 
+class \hyperlink{classdocker-proxy_1_1my__proxy_1_1_mount_points}{Mount\+Points}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_a0c927506d8346f17b620ac8e131174d0}{handle\+\_\+invalid\+\_\+usage} (error)
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_a219b29b5c79ad35297fb1f1deef275a3}{require\+\_\+appkey} (view\+\_\+function)
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_a0bf8985afda99ee825115bd5df0b6b40}{give\+\_\+me\+\_\+something\+\_\+unique} (name\+\_\+of\+\_\+container, hostname, owner, password, service\+\_\+name)
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_a32ea0c997fb4530822b84a6861f9666c}{give\+\_\+me\+\_\+mount\+\_\+point} (owner, size\+\_\+plan)
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_a7c16c9ad1dd493bd800fb0ccb04cfe32}{docker\+\_\+create} (name\+\_\+id, username, password, service, diskspace, image\+\_\+name, internal\+\_\+port, exec\+\_\+this)
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_a5c4e8ad5904fc41dc6e53312834445ae}{storage\+\_\+sum} ()
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_a2d2a47f5b69859690e7d948cbe5898a4}{storage} ()
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_ae108a533f8a3353f199f69883994c3cf}{stasts} (container\+\_\+id)
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_a96423469e4fe05cd336a8af7cb28d2ba}{management} (container\+\_\+id)
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_abf1a0936dc4dd14a5aaa78854c6583ce}{executecommands} (name\+\_\+id)
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_aaab4affe92f8974338caa10c0cf70c22}{makevm} (name\+\_\+id)
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_ad3276ec211f2fe107e03e4ed5e346df6}{version} ()
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_a7f6173c933a3e2e679eedb795386a08e}{query} (name)
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_a51d957f776d16e54de05b7034b113c1f}{investigate} (container\+\_\+id)
+\item 
+def \hyperlink{namespacedocker-proxy_1_1my__proxy_a84a1e1b9285c530fcd8b04177d08cdb3}{showstuff} ()
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{namespacedocker-proxy_1_1my__proxy_a1316b64a06ccf8940bd886efa8d18660}{app} = Flask(\+\_\+\+\_\+name\+\_\+\+\_\+)
+\item 
+\hyperlink{namespacedocker-proxy_1_1my__proxy_a3cda0544280d27f01985434ab3efa4b3}{db} = S\+Q\+L\+Alchemy(\hyperlink{namespacedocker-proxy_1_1my__proxy_a1316b64a06ccf8940bd886efa8d18660}{app})
+\item 
+\hyperlink{namespacedocker-proxy_1_1my__proxy_a4cb4fb47e79c0c24a5b66136731a0b0c}{debug}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a7c16c9ad1dd493bd800fb0ccb04cfe32}{}\label{namespacedocker-proxy_1_1my__proxy_a7c16c9ad1dd493bd800fb0ccb04cfe32} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!docker\+\_\+create@{docker\+\_\+create}}
+\index{docker\+\_\+create@{docker\+\_\+create}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{docker\+\_\+create()}{docker\_create()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+docker\+\_\+create (\begin{DoxyParamCaption}\item[{}]{name\+\_\+id,  }\item[{}]{username,  }\item[{}]{password,  }\item[{}]{service,  }\item[{}]{diskspace,  }\item[{}]{image\+\_\+name,  }\item[{}]{internal\+\_\+port,  }\item[{}]{exec\+\_\+this }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}this function will create the container
+:rtype : object
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 195 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_abf1a0936dc4dd14a5aaa78854c6583ce}{}\label{namespacedocker-proxy_1_1my__proxy_abf1a0936dc4dd14a5aaa78854c6583ce} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!executecommands@{executecommands}}
+\index{executecommands@{executecommands}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{executecommands()}{executecommands()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+executecommands (\begin{DoxyParamCaption}\item[{}]{name\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}this function will execute commands on the container
+curl -i -H "secretkey:1234" -H "Content-Type: application/json" -X POST -d
+'{"command":"htpasswd -b -c /etc/nginx/.htpasswd test test"}' http://arisvm:5000/api/seedboxes/execute/rtorrent
+
+:param name_id:
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 321 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a32ea0c997fb4530822b84a6861f9666c}{}\label{namespacedocker-proxy_1_1my__proxy_a32ea0c997fb4530822b84a6861f9666c} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!give\+\_\+me\+\_\+mount\+\_\+point@{give\+\_\+me\+\_\+mount\+\_\+point}}
+\index{give\+\_\+me\+\_\+mount\+\_\+point@{give\+\_\+me\+\_\+mount\+\_\+point}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{give\+\_\+me\+\_\+mount\+\_\+point()}{give\_me\_mount\_point()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+give\+\_\+me\+\_\+mount\+\_\+point (\begin{DoxyParamCaption}\item[{}]{owner,  }\item[{}]{size\+\_\+plan }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}this function will generate a shared tmpfs volume, the size should always be in M
+let's insert mount points into table, user is unique, every user will have unique mount points
+\end{DoxyVerb}
+ 
+
+Definition at line 167 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a0bf8985afda99ee825115bd5df0b6b40}{}\label{namespacedocker-proxy_1_1my__proxy_a0bf8985afda99ee825115bd5df0b6b40} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!give\+\_\+me\+\_\+something\+\_\+unique@{give\+\_\+me\+\_\+something\+\_\+unique}}
+\index{give\+\_\+me\+\_\+something\+\_\+unique@{give\+\_\+me\+\_\+something\+\_\+unique}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{give\+\_\+me\+\_\+something\+\_\+unique()}{give\_me\_something\_unique()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+give\+\_\+me\+\_\+something\+\_\+unique (\begin{DoxyParamCaption}\item[{}]{name\+\_\+of\+\_\+container,  }\item[{}]{hostname,  }\item[{}]{owner,  }\item[{}]{password,  }\item[{}]{service\+\_\+name }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}let's generate random and unique port
+:rtype : object
+\end{DoxyVerb}
+ 
+
+Definition at line 134 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a0c927506d8346f17b620ac8e131174d0}{}\label{namespacedocker-proxy_1_1my__proxy_a0c927506d8346f17b620ac8e131174d0} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!handle\+\_\+invalid\+\_\+usage@{handle\+\_\+invalid\+\_\+usage}}
+\index{handle\+\_\+invalid\+\_\+usage@{handle\+\_\+invalid\+\_\+usage}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{handle\+\_\+invalid\+\_\+usage()}{handle\_invalid\_usage()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+handle\+\_\+invalid\+\_\+usage (\begin{DoxyParamCaption}\item[{}]{error }\end{DoxyParamCaption})}
+
+
+
+Definition at line 48 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a51d957f776d16e54de05b7034b113c1f}{}\label{namespacedocker-proxy_1_1my__proxy_a51d957f776d16e54de05b7034b113c1f} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!investigate@{investigate}}
+\index{investigate@{investigate}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{investigate()}{investigate()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+investigate (\begin{DoxyParamCaption}\item[{}]{container\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}investigare container, can be name or id
+curl -H 'secretkey:1234' http://localhost:5000/api/seedboxes/investigate/83f1ee418bc4975c1a76bbffb96fb914caeb13c0cea5d44010e3
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 426 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_aaab4affe92f8974338caa10c0cf70c22}{}\label{namespacedocker-proxy_1_1my__proxy_aaab4affe92f8974338caa10c0cf70c22} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!makevm@{makevm}}
+\index{makevm@{makevm}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{makevm()}{makevm()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+makevm (\begin{DoxyParamCaption}\item[{}]{name\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}curl -i -H "secretkey:1234" -H "Content-Type: application/json" -X POST -d '{"username":"dan","password":
+"123456789", "options": {"diskspace":"500m","service":"ssh"}}' http://localhost:5000/api/seedboxes/new/sshdan
+this will create a container
+we parse the json data and take username/password and we insert this into db
+:param name_id:
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 343 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a96423469e4fe05cd336a8af7cb28d2ba}{}\label{namespacedocker-proxy_1_1my__proxy_a96423469e4fe05cd336a8af7cb28d2ba} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!management@{management}}
+\index{management@{management}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{management()}{management()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+management (\begin{DoxyParamCaption}\item[{}]{container\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}this function will restart/stop/kill an instace
+curl -i -H 'secretkey:1234' -H "Content-Type: application/json" -X POST -d
+'{"action":"start" }' http://localhost:5000/api/seedboxes/management/b90ea5517564
+:param container_id:
+:param timeout:
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 285 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a7f6173c933a3e2e679eedb795386a08e}{}\label{namespacedocker-proxy_1_1my__proxy_a7f6173c933a3e2e679eedb795386a08e} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!query@{query}}
+\index{query@{query}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{query()}{query()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+query (\begin{DoxyParamCaption}\item[{}]{name }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}look in the containers db and return values
+curl -i -H 'secretkey:1234'  http://localhost:5000/api/seedboxes/query/nginx
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 410 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a219b29b5c79ad35297fb1f1deef275a3}{}\label{namespacedocker-proxy_1_1my__proxy_a219b29b5c79ad35297fb1f1deef275a3} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!require\+\_\+appkey@{require\+\_\+appkey}}
+\index{require\+\_\+appkey@{require\+\_\+appkey}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{require\+\_\+appkey()}{require\_appkey()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+require\+\_\+appkey (\begin{DoxyParamCaption}\item[{}]{view\+\_\+function }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}simple appkey validation
+it will check presence of the header secretkey with value 123
+:param view_function:
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 54 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a84a1e1b9285c530fcd8b04177d08cdb3}{}\label{namespacedocker-proxy_1_1my__proxy_a84a1e1b9285c530fcd8b04177d08cdb3} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!showstuff@{showstuff}}
+\index{showstuff@{showstuff}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{showstuff()}{showstuff()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+showstuff (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}this will return all instances of a specific user
+curl -H 'secretkey:1234' http://localhost:5000/api/seedboxes/showinstances?name_id=dan
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 443 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_ae108a533f8a3353f199f69883994c3cf}{}\label{namespacedocker-proxy_1_1my__proxy_ae108a533f8a3353f199f69883994c3cf} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!stasts@{stasts}}
+\index{stasts@{stasts}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{stasts()}{stasts()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+stasts (\begin{DoxyParamCaption}\item[{}]{container\+\_\+id }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}get statistics from container
+curl -i -H 'secretkey:1234'  http://localhost:5000/api/seedboxes/stats/vm6690_ssh
+:param container_id:
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 268 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a2d2a47f5b69859690e7d948cbe5898a4}{}\label{namespacedocker-proxy_1_1my__proxy_a2d2a47f5b69859690e7d948cbe5898a4} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!storage@{storage}}
+\index{storage@{storage}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{storage()}{storage()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+storage (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}curl -i -H "secretkey:1234" http://localhost:5000/api/seedboxes/storage
+retunr alocated storage from db
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 255 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a5c4e8ad5904fc41dc6e53312834445ae}{}\label{namespacedocker-proxy_1_1my__proxy_a5c4e8ad5904fc41dc6e53312834445ae} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!storage\+\_\+sum@{storage\+\_\+sum}}
+\index{storage\+\_\+sum@{storage\+\_\+sum}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{storage\+\_\+sum()}{storage\_sum()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+storage\+\_\+sum (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}function to check storage
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 242 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_ad3276ec211f2fe107e03e4ed5e346df6}{}\label{namespacedocker-proxy_1_1my__proxy_ad3276ec211f2fe107e03e4ed5e346df6} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!version@{version}}
+\index{version@{version}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{version()}{version()}}
+{\footnotesize\ttfamily def docker-\/proxy.\+my\+\_\+proxy.\+version (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}return versios of docker, used for whatever
+:return:
+\end{DoxyVerb}
+ 
+
+Definition at line 395 of file my\+\_\+proxy.\+py.
+
+
+
+\subsection{Variable Documentation}
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a1316b64a06ccf8940bd886efa8d18660}{}\label{namespacedocker-proxy_1_1my__proxy_a1316b64a06ccf8940bd886efa8d18660} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!app@{app}}
+\index{app@{app}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{app}{app}}
+{\footnotesize\ttfamily docker-\/proxy.\+my\+\_\+proxy.\+app = Flask(\+\_\+\+\_\+name\+\_\+\+\_\+)}
+
+
+
+Definition at line 18 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a3cda0544280d27f01985434ab3efa4b3}{}\label{namespacedocker-proxy_1_1my__proxy_a3cda0544280d27f01985434ab3efa4b3} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!db@{db}}
+\index{db@{db}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{db}{db}}
+{\footnotesize\ttfamily docker-\/proxy.\+my\+\_\+proxy.\+db = S\+Q\+L\+Alchemy(\hyperlink{namespacedocker-proxy_1_1my__proxy_a1316b64a06ccf8940bd886efa8d18660}{app})}
+
+
+
+Definition at line 25 of file my\+\_\+proxy.\+py.
+
+\hypertarget{namespacedocker-proxy_1_1my__proxy_a4cb4fb47e79c0c24a5b66136731a0b0c}{}\label{namespacedocker-proxy_1_1my__proxy_a4cb4fb47e79c0c24a5b66136731a0b0c} 
+\index{docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}!debug@{debug}}
+\index{debug@{debug}!docker-\/proxy\+::my\+\_\+proxy@{docker-\/proxy\+::my\+\_\+proxy}}
+\subsubsection{\texorpdfstring{debug}{debug}}
+{\footnotesize\ttfamily docker-\/proxy.\+my\+\_\+proxy.\+debug}
+
+
+
+Definition at line 459 of file my\+\_\+proxy.\+py.
+

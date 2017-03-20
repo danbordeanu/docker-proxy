@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<table>
+    {% for dict_item in result_search %}
+   {% for key, value in dict_item.items() %}
+      <tr>
+
+       <th>
+        {% if 'name' in key %}
+           I will make you link
+           {% else %}
+           {{key}}
+           {% endif %}
+       </th>
+
+       <td>
+           {% if 'name' in key %}
+           Link {{value}}
+           {% else %}
+           {{value}}
+           {% endif %}
+
+       </td>
+      </tr>
+   {% endfor %}
+{% endfor %}
+</table>
+</body>
+</html>

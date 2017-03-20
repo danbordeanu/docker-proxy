@@ -1,0 +1,16 @@
+Unit]
+Description=gunicorn daemon
+#Requires=gunicorn.socket
+After=network.target
+After=syslog.target
+
+[Service]
+#PIDFile=/var/run/gunicorn/pid
+User=sysadmin
+Group=sysadmin
+
+Enviroment=sitedir=/home/sysadmin/work/proxy
+ExecStart=/usr/bin/gunicorn --bind 127.0.0.1:4000 --chdir /home/sysadmin/work/proxy  wsgi:app --log-file /var/log/gunicorn/gunicorn.log --log-level DEBUG
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
