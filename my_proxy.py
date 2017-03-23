@@ -1,9 +1,7 @@
 from flask import Flask, request, abort, Response
-from flask import render_template_string
 from flask import jsonify
 import connect_docker_server as make_connection
 import config_parser as parser
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import exists
 import random_generator as random_generator_function
 import json
@@ -12,16 +10,11 @@ import validate_hostname as validatehostname
 from werkzeug.security import generate_password_hash
 from sqlalchemy import text
 import volume_size as volumesize
+from models import db
+import models as my_sql_stuff
 
 
 app = Flask(__name__)
-
-# TODO move to models.py
-try:
-    app.config['SQLALCHEMY_DATABASE_URI'] = parser.config_params('dbname')['location_name_db']
-except ImportError:
-    print 'no db connection availabe'
-db = SQLAlchemy(app)
 
 
 class InvalidUsage(Exception):
@@ -60,75 +53,13 @@ def require_appkey(view_function):
 
     @wraps(view_function)
     def decorated_function(*args, **kwargs):
-        if request.headers.get('secretkey') and request.headers.get('secretkey') == parser.config_params('proxy')[
-            'secretkey']:
+        if request.headers.get('secretkey') and request.headers.get('secretkey') \
+                == parser.config_params('proxy')['secretkey']:
             return view_function(*args, **kwargs)
         else:
             abort(401)
 
     return decorated_function
-
-
-class MountPoints(db.Model):
-    """
-    let's create the mount points table
-    """
-    __tablename__ = 'mount'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    owner = db.Column(db.String(80), unique=True)
-    mount_point = db.Column(db.String(200))
-    volume_name = db.Column(db.String(200))
-    size_plan = db.Column(db.String(80))
-
-    def __init__(self, owner, mount_point, volume_name, size_plan):
-        self.owner = owner
-        self.mount_point = mount_point
-        self.volume_name = volume_name
-        self.size_plan = size_plan
-
-    def __repr__(self):
-        """
-        return only the mount point
-        """
-        return str(self.mount_point)
-
-
-class ContainerNames(db.Model):
-    """
-    let's do ContainerNames tables
-    """
-    __tablename__ = 'containers'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    #name
-    name_of_container = db.Column(db.String(80))#, unique=True)
-    # hostname
-    hostname = db.Column(db.String(80))
-    # owner will be used also for login
-    owner = db.Column(db.String(100))
-    # password
-    password = db.Column(db.String(200))
-    # public port for container
-    public_port = db.Column(db.Integer, unique=True)
-    # service name
-    service_name = db.Column(db.String(100))
-
-    def __init__(self, name_of_container, hostname, owner, password, public_port, service_name):
-        self.name_of_container = name_of_container
-        self.hostname = hostname
-        self.owner = owner
-        self.password = password
-        assert isinstance(public_port, object)
-        self.public_port = public_port
-        self.service_name = service_name
-
-    def __repr__(self):
-        """
-        return json
-        """
-        return json.dumps(
-            {'name_of_container': self.name_of_container, 'hostname': self.hostname,
-             'owner': self.owner, 'password': self.password, 'public_port': self.public_port,
-             'service_name': self.service_name})
 
 
 def give_me_something_unique(name_of_container, hostname, owner, password, service_name):
@@ -138,26 +69,26 @@ def give_me_something_unique(name_of_container, hostname, owner, password, servi
     """
     # generate random port
     new_port = random_generator_function.generator_instance.random_port()
-    if db.session.query(exists().where(ContainerNames.public_port == new_port)).scalar():
+    if db.session.query(exists().where(my_sql_stuff.ContainerNames.public_port == new_port)).scalar():
         app.logger.info('there is a port assigned already, try to make a new one')
         try:
             new_port = random_generator_function.generator_instance.random_port()
             app.logger.info('try to insert, if working we god, if not we try again in excepetion')
             db.session.add(
-                ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
+                my_sql_stuff.ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
                                new_port, service_name))
             db.session.commit()
         except:
             app.logger.info('again we failed, we try again')
             new_port = random_generator_function.generator_instance.random_port()
             db.session.add(
-                ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
+                my_sql_stuff.ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
                                new_port, service_name))
             db.session.commit()
     else:
         app.logger.info('port doesn\'t exists, good to go')
         db.session.add(
-            ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
+            my_sql_stuff.ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
                            new_port, service_name))
         db.session.commit()
     return new_port
@@ -168,9 +99,9 @@ def give_me_mount_point(owner, size_plan):
     this function will generate a shared tmpfs volume, the size should always be in M
     let's insert mount points into table, user is unique, every user will have unique mount points
     """
-    if db.session.query(exists().where(MountPoints.owner == owner)).scalar():
+    if db.session.query(exists().where(my_sql_stuff.MountPoints.owner == owner)).scalar():
         #if user exists we will reuse the same volume
-        new_volume = MountPoints.query.filter_by(owner=owner).first()
+        new_volume = my_sql_stuff.MountPoints.query.filter_by(owner=owner).first()
         new_volume_str = str(new_volume)
         app.logger.info('This user has already a volume assigned {0}'.format(new_volume_str[21:]))
         return new_volume_str[21:]
@@ -187,7 +118,7 @@ def give_me_mount_point(owner, size_plan):
         new_volume_created = new_volume['Mountpoint'][:-6]
         new_volume_name = new_volume['Name']
         app.logger.info('new volume created:{0} for user:{1} with name {2}'.format(new_volume_created, owner, new_volume_name))
-        db.session.add(MountPoints(owner, new_volume_created, new_volume_name, size_plan))
+        db.session.add(my_sql_stuff.MountPoints(owner, new_volume_created, new_volume_name, size_plan))
         db.session.commit()
         return str(new_volume['Name'])
 
@@ -201,7 +132,7 @@ def docker_create(name_id, username, password, service, diskspace, image_name, i
     """
     #check if there is a container with the same name, anyway useless because docker is doing same thing
     #we can remove this in the future
-    if db.session.query(exists().where(ContainerNames.name_of_container == name_id)).scalar():
+    if db.session.query(exists().where(my_sql_stuff.ContainerNames.name_of_container == name_id)).scalar():
         raise InvalidUsage('there is a vm already with this name', status_code=404)
 
 
@@ -252,12 +183,10 @@ def docker_create(name_id, username, password, service, diskspace, image_name, i
         return result_new_container
     except:
             #this will delete the table raw where added port and name in ContainerNames
-            ContainerNames.query.filter_by(name_of_container=name_id).delete()
+            my_sql_stuff.ContainerNames.query.filter_by(name_of_container=name_id).delete()
             db.session.commit()
             app.logger.error('An error occurred creating the container')
             raise InvalidUsage('can\'t make this container', status_code=404)
-
-
 
 
 def storage_sum():
@@ -349,8 +278,8 @@ def management(container_id):
     #delete container, force
     if content['action'] == 'delete':
         make_connection.connect_docker_server().remove_container(container_id, force=True)
-        assert isinstance(ContainerNames.query.filter_by(name_of_container=container_id).delete, object)
-        ContainerNames.query.filter_by(name_of_container=container_id).delete()
+        assert isinstance(my_sql_stuff.ContainerNames.query.filter_by(name_of_container=container_id).delete, object)
+        my_sql_stuff.ContainerNames.query.filter_by(name_of_container=container_id).delete()
         db.session.commit()
     dat = '{0}"container_id": "{1}", "action": "{2}"{3}'.format('{', container_id, content['action'], '}')
     resp = Response(response=dat, status=200, mimetype="application/json")
@@ -581,11 +510,9 @@ def showstuff():
     """
     if 'name_id' in request.args:
         show_property_of_user = request.args['name_id']
-        return render_template_string('{{what}}',
-                                      what=db.session.query(ContainerNames).filter_by(
-                                          owner=show_property_of_user).all())
+        return jsonify(str(db.session.query(my_sql_stuff.ContainerNames).filter_by(owner=show_property_of_user).all()))
     else:
-        return render_template_string('{{what}}', what='need a name')
+        raise InvalidUsage('Need a name of user to query database', status_code=200)
 
 
 @app.route('/api/seedboxes/killuser', methods=['POST'])
@@ -594,34 +521,36 @@ def killuser():
     """
     :return:
     this function will delete all user containers and volume attached to the containers
+    curl -i -H "secretkey:1234" -H "Content-Type: application/json" -X POST  -d '{"username":"dan"}' http://localhost:5000/api/seedboxes/killuser
     """
 
     content = request.json
     user_to_be_deleted = format(content['username'])
-    dat = 'Username {0} containers and volume deleted'.format(user_to_be_deleted)
+    dat = 'All containers and volumes of username {0} have been deleted'.format(user_to_be_deleted)
 
     #let's do some checks
 
-    if not db.session.query(exists().where(ContainerNames.owner == user_to_be_deleted)).scalar():
+    if not db.session.query(exists().where(my_sql_stuff.ContainerNames.owner == user_to_be_deleted)).scalar():
         app.logger.info('There is no such username {0}'.format(user_to_be_deleted))
         raise InvalidUsage('there is no such username, nothing to delete, go away', status_code=404)
     else:
         try:
             #let's stop the containers
-            for instance in db.session.query(ContainerNames).group_by(ContainerNames.name_of_container).filter_by(owner=user_to_be_deleted).all():
+            for instance in db.session.query(my_sql_stuff.ContainerNames).group_by(
+                    my_sql_stuff.ContainerNames.name_of_container).filter_by(owner=user_to_be_deleted).all():
                 app.logger.info('Username {0} containers {1} will be deleted'.format(user_to_be_deleted, instance.name_of_container))
                 make_connection.connect_docker_server().remove_container(instance.name_of_container, force=True)
 
             #remove container names from db
-            ContainerNames.query.filter_by(owner=user_to_be_deleted).delete()
+            my_sql_stuff.ContainerNames.query.filter_by(owner=user_to_be_deleted).delete()
 
             #let's delete volume
-            for volume in db.session.query(MountPoints).filter_by(owner=user_to_be_deleted).limit(1):
+            for volume in db.session.query(my_sql_stuff.MountPoints).filter_by(owner=user_to_be_deleted).limit(1):
                 app.logger.info('Username {0} volume {1} will be deleted'.format(user_to_be_deleted, volume.volume_name))
                 make_connection.connect_docker_server().remove_volume(volume.volume_name)
 
             #let's delete volume from db
-            MountPoints.query.filter_by(owner=user_to_be_deleted).delete()
+            my_sql_stuff.MountPoints.query.filter_by(owner=user_to_be_deleted).delete()
             #commit db
             db.session.commit()
 
