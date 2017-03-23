@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 class InvalidUsage(Exception):
     """
-    class to return specific return codes
+    class to return specific return type codes
     """
     status_code = 400
 
