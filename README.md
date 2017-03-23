@@ -68,6 +68,7 @@ PrivateTmp=true
 For MYSQL **config.ini** must be changed
 
 ```
+[dbname]
 location_name_db: mysql://proxy_db_user:9911@localhost/proxy_db
 ```
 
