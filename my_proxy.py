@@ -92,6 +92,7 @@ class MountPoints(db.Model):
         """
         return str(self.mount_point)
 
+
 class ContainerNames(db.Model):
     """
     let's do ContainerNames tables
@@ -136,11 +137,11 @@ def give_me_something_unique(name_of_container, hostname, owner, password, servi
     :rtype : object
     """
     # generate random port
-    new_port = random_generator_function.rand_port()
+    new_port = random_generator_function.generator_instance.random_port()
     if db.session.query(exists().where(ContainerNames.public_port == new_port)).scalar():
         app.logger.info('there is a port assigned already, try to make a new one')
         try:
-            new_port = random_generator_function.rand_port()
+            new_port = random_generator_function.generator_instance.random_port()
             app.logger.info('try to insert, if working we god, if not we try again in excepetion')
             db.session.add(
                 ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
@@ -148,7 +149,7 @@ def give_me_something_unique(name_of_container, hostname, owner, password, servi
             db.session.commit()
         except:
             app.logger.info('again we failed, we try again')
-            new_port = random_generator_function.rand_port()
+            new_port = random_generator_function.generator_instance.random_port()
             db.session.add(
                 ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
                                new_port, service_name))
@@ -175,7 +176,7 @@ def give_me_mount_point(owner, size_plan):
         return new_volume_str[21:]
     else:
         # seems this is a new user and we will create a new mount point for him
-        my_random = random_generator_function.rand_volume()
+        my_random = random_generator_function.generator_instance.random_volume()
         size = 'size=' + size_plan
         # this will create a new volume
         new_volume = make_connection.connect_docker_server().create_volume(name=owner + my_random, driver='local',
@@ -218,7 +219,6 @@ def docker_create(name_id, username, password, service, diskspace, image_name, i
         app.logger.info('Generating and inserting in db a new allocated port {0}'.format(my_new_list))
         where_to_mount = my_new_volume + parser.config_params('mount')['where_to_mount_dir']
         app.logger.info('We will mount in this location {0}'.format(where_to_mount))
-
 
         #here we make the list of ports from confing into a string
         #and remove / tcp udp
@@ -469,7 +469,7 @@ def makevm(name_id):
         cap_value = 'NET_ADMIN'
         privileged = False
         internal_port = parser.config_params('images')['openvpnudp_internal_port'].split()
-        
+
     #create owncloud container
     if content['options']['service'] == 'owncloud':
         image_name = parser.config_params('images')['owncloud_image_name']
