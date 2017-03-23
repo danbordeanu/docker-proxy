@@ -86,7 +86,7 @@ location_name_db: sqlite:////tmp/test.db
 In order to install db tables
 
 ```python
-from my_proxy import db
+from models import db
 db.create_all()
 ```
 
