@@ -139,7 +139,6 @@ def docker_create(name_id, username, password, service, diskspace, image_name, i
     :rtype : object
     :return:
     """
-
     #to the magic, generate unique port, make the shared volume
     my_new_volume = give_me_mount_point(username, diskspace)
 
@@ -189,7 +188,7 @@ def docker_create(name_id, username, password, service, diskspace, image_name, i
             #this will delete the table raw where added port and name in ContainerNames
             my_sql_stuff.ContainerNames.query.filter_by(name_of_container=name_id).delete()
             db.session.commit()
-            app.logger.error('An error occurred creating the container:%s', (e))
+            app.logger.error('An error occurred creating the container:{0}'.format(e))
 
 
 def storage_sum():
@@ -468,12 +467,16 @@ def makevm(name_id):
         privileged = False
         internal_port = parser.config_params('images')['sftp_internal_port'].split()
 
-    new_container = docker_create.delay(name_id, content['username'], content['password'],
-                                        content['options']['service'],
-                      content['options']['diskspace'], image_name, internal_port, exec_this, cap_value, privileged,
-                                  plex_secret_token, plex_server_name)
-    app.logger.info('New container ID for redis is {0}'.format(new_container.id))
-    return jsonify(), 202, dict(Location=url_for('taskstatus', task_id=new_container.id))
+    if db.session.query(exists().where(my_sql_stuff.ContainerNames.name_of_container == name_id)).scalar():
+        raise InvalidUsage('There is already a container with this name', status_code=200)
+    else:
+        new_container = docker_create.delay(name_id, content['username'], content['password'],
+                                            content['options']['service'],
+                                            content['options']['diskspace'], image_name, internal_port, exec_this,
+                                            cap_value, privileged,
+                                            plex_secret_token, plex_server_name)
+        app.logger.info('New container ID for redis is {0}'.format(new_container.id))
+        return jsonify(), 202, dict(Location=url_for('taskstatus', task_id=new_container.id))
 
 
 @app.route('/api/seedboxes/pending/<string:task_id>')
@@ -504,8 +507,7 @@ def taskstatus(task_id):
             'state': task.state,
             'current': 1,
             'total': 1,
-            'reason': 'maybe there is a container with the same name'
-            # 'status': str(task.result),  # this is the exception raised
+            'status': str(task.result),  # this is the exception raised
         }
     return jsonify(response)
 
