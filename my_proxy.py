@@ -14,9 +14,6 @@ from models import db
 import models as my_sql_stuff
 from celery import Celery
 
-import time
-
-
 
 app = Flask(__name__)
 
@@ -95,10 +92,13 @@ def give_me_something_unique(name_of_container, hostname, owner, password, servi
             db.session.commit()
     else:
         app.logger.info('port doesn\'t exists, good to go')
-        db.session.add(
-            my_sql_stuff.ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
+        try:
+            db.session.add(
+                my_sql_stuff.ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
                            new_port, service_name))
-        db.session.commit()
+            db.session.commit()
+        except Exception as e:
+            app.logger.error('db issue during insert: {0}'.format(e))
     return new_port
 
 
@@ -139,12 +139,6 @@ def docker_create(name_id, username, password, service, diskspace, image_name, i
     :rtype : object
     :return:
     """
-    #check if there is a container with the same name, anyway useless because docker is doing same thing
-    #we can remove this in the future
-    if db.session.query(exists().where(my_sql_stuff.ContainerNames.name_of_container == name_id)).scalar():
-        raise InvalidUsage('there is a vm already with this name', status_code=404)
-
-
 
     #to the magic, generate unique port, make the shared volume
     my_new_volume = give_me_mount_point(username, diskspace)
@@ -191,12 +185,11 @@ def docker_create(name_id, username, password, service, diskspace, image_name, i
                                                                                                         new_exposed_ports))
         app.logger.info('New container created with id {0}'.format(name_id))
         return result_new_container
-    except:
+    except Exception as e:
             #this will delete the table raw where added port and name in ContainerNames
             my_sql_stuff.ContainerNames.query.filter_by(name_of_container=name_id).delete()
             db.session.commit()
-            app.logger.error('An error occurred creating the container')
-            raise InvalidUsage('can\'t make this container', status_code=404)
+            app.logger.error('An error occurred creating the container:%s', (e))
 
 
 def storage_sum():
@@ -271,27 +264,53 @@ def management(container_id):
     :param container_id:
     :return:
     """
+    # TODO mve this in a separate function and do one single call for the actions
     content = request.json
     app.logger.info('Do action {0} for container{1}'.format(content['action'], container_id))
     #stop container
     if content['action'] == 'stop':
-        make_connection.connect_docker_server().stop(container_id, timeout=10)
+        try:
+            make_connection.connect_docker_server().stop(container_id, timeout=10)
+            dat = '{0}"container_id": "{1}", "action": "{2}"{3}'.format('{', container_id, content['action'], '}')
+        except Exception as e:
+            app.logger.error('problem stopping the container: {0}'.format(e))
+            dat = 'there was a problem with {0} action'.format(content['action'])
     #restart container
     if content['action'] == 'restart':
-        make_connection.connect_docker_server().restart(container_id, timeout=10)
+        try:
+            make_connection.connect_docker_server().restart(container_id, timeout=10)
+            dat = '{0}"container_id": "{1}", "action": "{2}"{3}'.format('{', container_id, content['action'], '}')
+        except Exception as e:
+            app.logger.error('problem restarting the container: {0}'.format(e))
+            dat = 'there was a problem with {0} action'.format(content['action'])
     #start container after stop
     if content['action'] == 'start':
-        make_connection.connect_docker_server().start(container_id)
+        try:
+            make_connection.connect_docker_server().start(container_id)
+            dat = '{0}"container_id": "{1}", "action": "{2}"{3}'.format('{', container_id, content['action'], '}')
+        except Exception as e:
+            app.logger.error('problem starting the container: {0}'.format(e))
+            dat = 'there was a problem with {0} action'.format(content['action'])
     #kill container, main process
     if content['action'] == 'kill':
-        make_connection.connect_docker_server().kill(container_id, timeout=10)
+        try:
+            make_connection.connect_docker_server().kill(container_id, timeout=10)
+            dat = '{0}"container_id": "{1}", "action": "{2}"{3}'.format('{', container_id, content['action'], '}')
+        except Exception as e:
+            app.logger.error('problem  killing the container: {0}'.format(e))
+            dat = 'there was a problem with {0} action'.format(content['action'])
     #delete container, force
     if content['action'] == 'delete':
-        make_connection.connect_docker_server().remove_container(container_id, force=True)
-        assert isinstance(my_sql_stuff.ContainerNames.query.filter_by(name_of_container=container_id).delete, object)
-        my_sql_stuff.ContainerNames.query.filter_by(name_of_container=container_id).delete()
-        db.session.commit()
-    dat = '{0}"container_id": "{1}", "action": "{2}"{3}'.format('{', container_id, content['action'], '}')
+        try:
+            make_connection.connect_docker_server().remove_container(container_id, force=True)
+            assert isinstance(my_sql_stuff.ContainerNames.query.filter_by(name_of_container=container_id).delete,
+                              object)
+            my_sql_stuff.ContainerNames.query.filter_by(name_of_container=container_id).delete()
+            db.session.commit()
+            dat = '{0}"container_id": "{1}", "action": "{2}"{3}'.format('{', container_id, content['action'], '}')
+        except Exception as e:
+            app.logger.error('problem deleting the container: {0}'.format(e))
+            dat = 'there was a problem with {0} action'.format(content['action'])
     resp = Response(response=dat, status=200, mimetype="application/json")
     return resp
 
