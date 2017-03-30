@@ -55,7 +55,7 @@ class ContainerNames(db.Model):
     __tablename__ = 'containers'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # name
-    name_of_container = db.Column(db.String(80))  # , unique=True)
+    name_of_container = db.Column(db.String(80), unique=True)
     # hostname
     hostname = db.Column(db.String(80))
     # owner will be used also for login
