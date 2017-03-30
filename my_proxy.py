@@ -1,4 +1,4 @@
-from flask import Flask, request, abort, Response
+from flask import Flask, request, abort, Response, url_for
 from flask import jsonify
 import connect_docker_server as make_connection
 import config_parser as parser
@@ -12,10 +12,18 @@ from sqlalchemy import text
 import volume_size as volumesize
 from models import db
 import models as my_sql_stuff
+from celery import Celery
+
+import time
+
 
 
 app = Flask(__name__)
 
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 class InvalidUsage(Exception):
     """
@@ -123,6 +131,7 @@ def give_me_mount_point(owner, size_plan):
         return str(new_volume['Name'])
 
 
+@celery.task
 def docker_create(name_id, username, password, service, diskspace, image_name, internal_port, exec_this, cap_add_value,
                   privileged, plex_secret_token, plex_server_name):
     """
@@ -134,6 +143,7 @@ def docker_create(name_id, username, password, service, diskspace, image_name, i
     #we can remove this in the future
     if db.session.query(exists().where(my_sql_stuff.ContainerNames.name_of_container == name_id)).scalar():
         raise InvalidUsage('there is a vm already with this name', status_code=404)
+
 
 
     #to the magic, generate unique port, make the shared volume
@@ -439,11 +449,46 @@ def makevm(name_id):
         privileged = False
         internal_port = parser.config_params('images')['sftp_internal_port'].split()
 
-    new_container = docker_create(name_id, content['username'], content['password'], content['options']['service'],
+    new_container = docker_create.delay(name_id, content['username'], content['password'],
+                                        content['options']['service'],
                       content['options']['diskspace'], image_name, internal_port, exec_this, cap_value, privileged,
                                   plex_secret_token, plex_server_name)
-    return jsonify(new_container)
+    app.logger.info('New container ID for redis is {0}'.format(new_container.id))
+    return jsonify(), 202, dict(Location=url_for('taskstatus', task_id=new_container.id))
 
+
+@app.route('/api/seedboxes/pending/<string:task_id>')
+@require_appkey
+# start in a console this > celery2 worker -A my_proxy.celery --loglevel=info
+def taskstatus(task_id):
+    task = docker_create.AsyncResult(task_id)
+    if task.state == 'PENDING':
+        response = {
+            'state': task.state,
+            'current': 0,
+            'total': 1,
+            'status': 'Pending...'
+        }
+    elif task.state != 'FAILURE':
+        app.logger.info('Info about the new  container'.format(task.result))
+        app.logger.info('Task - create_container state is {0}'.format(task.state))
+        app.logger.info('Task - create_container current is {0}'.format(task.info.get('current', 0)))
+        app.logger.info('Task - create_container total is {0}'.format(task.info.get('total', 1)))
+        app.logger.info('Task - create_container status is {0}'.format(task.info.get('status', '')))
+        response = task.result
+        if 'result' in task.info:
+            response['result'] = task.info['result']
+    else:
+        # something went wrong in the background job
+        ## print task.result
+        response = {
+            'state': task.state,
+            'current': 1,
+            'total': 1,
+            'reason': 'maybe there is a container with the same name'
+            # 'status': str(task.result),  # this is the exception raised
+        }
+    return jsonify(response)
 
 @app.route('/api/seedboxes/volumeusage/<string:name_id>', methods=['GET'])
 @require_appkey
