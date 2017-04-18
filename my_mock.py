@@ -1,10 +1,10 @@
 __author__ = 'dan'
 
-from docker import Client
 import random
-import config_parser as parser
 
+from docker import Client
 
+from helpers import config_parser as parser
 
 cli = Client(base_url='tcp://192.168.98.99:4243')
 

@@ -1,5 +1,3 @@
-__author__ = 'danbordeanu'
-
 import ConfigParser
 
 
@@ -11,6 +9,7 @@ def check_if_config_exists(config_file):
         print('no file, no go {0}'.format(e))
         return False
     return True
+
 
 def config_params(section):
     check_if_config_exists('config.ini')

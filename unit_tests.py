@@ -2,9 +2,9 @@ __author__ = 'danbordeanu'
 
 import unittest
 
-from config_parser import check_if_config_exists
-import config_parser as parser
-import random_generator as random_generator_function
+from helpers.config_parser import check_if_config_exists
+import helpers.config_parser as parser
+from helpers import random_generator as random_generator_function
 
 
 class Md5Test(unittest.TestCase):

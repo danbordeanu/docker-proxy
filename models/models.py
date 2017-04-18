@@ -1,5 +1,5 @@
 from flask import Flask
-import config_parser as parser
+import helpers.config_parser as parser
 from flask_sqlalchemy import SQLAlchemy
 import json
 
