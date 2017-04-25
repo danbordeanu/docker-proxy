@@ -372,13 +372,32 @@ def management(container_id):
     return resp
 
 
+@app.route('/api/seedboxes/executeswarm/<string:name_id>', methods=['POST'])
+@require_appkey
+def executecommandsswarm(name_id):
+    """
+    this function will execute commnads on the node ip for a specific container
+    curl -i -H "secretkey:1234" -H "Content-Type: application/json" -X POST -d
+    '{"command":"htpasswd -b -c /etc/nginx/.htpasswd test test", "nodeip":"81.171.24.247"}'
+    http://localhost:5000/api/seedboxes/executeswarm/cd7fae77c1749009
+    :param name_id:
+    :param container_id:
+    :param node_ip:
+    :return:
+    """
+    content = request.json
+    app.logger.info('executing command:{0} for container id:{1} on node ip:{2}'.format(content['command'], name_id,
+                                                                                       content['nodeip']))
+    return Response(swarnodeip.nodeipexecute(content['nodeip'], name_id, content['command']),
+                    mimetype='application/json')
+
 @app.route('/api/seedboxes/execute/<string:name_id>', methods=['POST'])
 @require_appkey
 def executecommands(name_id):
     """
     this function will execute commands on the container
     curl -i -H "secretkey:1234" -H "Content-Type: application/json" -X POST -d
-    '{"command":"htpasswd -b -c /etc/nginx/.htpasswd test test"}' http://arisvm:5000/api/seedboxes/execute/rtorrent
+    '{"command":"htpasswd -b -c /etc/nginx/.htpasswd test test"}' http://localhost:5000/api/seedboxes/execute/rtorrent
 
     :param name_id:
     :return:
