@@ -45,6 +45,8 @@ def connect_docker_server():
 
 connect = connect_docker_server()
 
+# TODO we need to remove this in the future
+
 # old python docker connection
 # def connect_docker_server():
 #     server_address = parser.config_params('server')['server_address']
