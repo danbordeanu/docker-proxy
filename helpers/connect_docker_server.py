@@ -4,6 +4,10 @@ import os
 import pytest
 
 
+# from docker import Client
+
+
+
 def requires_api_version(version):
     """
     Force validation of a docker API version, will fail if version < 1.24
@@ -40,3 +44,16 @@ def connect_docker_server():
         print 'no connection to the server :('
 
 connect = connect_docker_server()
+
+# old python docker connection
+# def connect_docker_server():
+#     server_address = parser.config_params('server')['server_address']
+#     try:
+#         cli = Client(base_url=server_address)
+#         cli.info()
+#         return cli
+#     except:
+#         print 'no connection to the server :('
+#
+#
+# connect = connect_docker_server()
