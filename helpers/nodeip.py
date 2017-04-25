@@ -7,6 +7,11 @@ import ast
 # TODO make this as a class
 
 def nodeip(name_id):
+    """
+    this function will return the node ip and the container id
+    :param name_id:
+    :return:
+    """
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -24,6 +29,13 @@ def nodeip(name_id):
 
 
 def nodeipexecute(node_ip, container_id, command):
+    """
+    this function will execute the command on the container ID on the node ip returned from nodeip function
+    :param node_ip:
+    :param container_id:
+    :param command:
+    :return:
+    """
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -37,6 +49,10 @@ def nodeipexecute(node_ip, container_id, command):
     stdin, stdout, stderr = ssh.exec_command(my_node_exec)
     stderr_print = stderr.read().rstrip()
     stdout_print = stdout.read().rstrip()
-    json_create = json.dumps({"Swarm exec command status output": dict(stderr='%s', stdout='%s')}) % (
-    stderr_print, stdout_print)
+    if len(stdout_print) == 0 and len(stderr_print) == 0:
+        json_create = json.dumps({'Swarm execute command status output': 'ok'})
+    else:
+        assert isinstance(stderr_print, object)
+        json_create = json.dumps({'Swarm execute command status output': dict(stderr='%s', stdout='%s')}) % (
+            stderr_print, stdout_print)
     return json_create
