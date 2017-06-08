@@ -1,5 +1,6 @@
 import json
 from functools import wraps
+import docker
 import ast
 from flask import Flask, request, abort, Response
 from flask import jsonify
@@ -137,7 +138,6 @@ def give_me_mount_point(owner, size_plan):
 
 def swarm_create(name_id, username, password, service, image_name, exec_this, internal_port,
                  plex_secret_token, plex_server_name):
-    import docker
     """
     this function will create a swarm container
     :param name_id:
