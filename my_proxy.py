@@ -166,7 +166,6 @@ def management(container_id):
             app.logger.error('problem  killing the container: {0}'.format(e))
             dat = 'there was a problem with {0} action'.format(content['action'])
     # delete container, force
-    #TODO delete also the volume
     if content['action'] == 'delete':
         try:
             make_connection.connect_docker_server().remove_container(container_id, force=True)
