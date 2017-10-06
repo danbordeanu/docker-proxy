@@ -1,27 +1,27 @@
+import ast
 import json
 from functools import wraps
-import docker
-import ast
+
+from celery import Celery
 from flask import Flask, request, abort, Response
 from flask import jsonify
 from sqlalchemy.sql import exists
-from werkzeug.security import generate_password_hash
-from sqlalchemy import text
-from celery import Celery
-import helpers.connect_docker_server as make_connection
+
 import helpers.config_parser as parser
-from helpers import random_generator as random_generator_function
+import helpers.connect_docker_server as make_connection
+import helpers.nodeip as swarnodeip
 import helpers.validate_hostname as validatehostname
 import helpers.volume_size as volumesize
-import helpers.nodeip as swarnodeip
-from models.models import db
+from helpers.docker_create import docker_create
+from helpers.storage_sum import storage_sum
+from helpers.swarm_create import swarm_create
 from models import models as my_sql_stuff
-
+from models.models import db
 
 app = Flask(__name__)
 
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+app.config['CELERY_BROKER_URL'] = 'redis://lulu:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://lulu:6379/0'
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
 
@@ -69,197 +69,6 @@ def require_appkey(view_function):
             abort(401)
 
     return decorated_function
-
-
-def give_me_something_unique(name_of_container, hostname, owner, password, service_name):
-    """
-    let's generate random and unique port
-    :rtype : object
-    """
-    # generate random port
-    new_port = random_generator_function.generator_instance.random_port()
-    if db.session.query(exists().where(my_sql_stuff.ContainerNames.public_port == new_port)).scalar():
-        app.logger.info('there is a port assigned already, try to make a new one')
-        try:
-            new_port = random_generator_function.generator_instance.random_port()
-            app.logger.info('try to insert, if working we god, if not we try again in excepetion')
-            db.session.add(
-                my_sql_stuff.ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
-                                            new_port, service_name))
-            db.session.commit()
-        except:
-            app.logger.info('again we failed, we try again')
-            new_port = random_generator_function.generator_instance.random_port()
-            db.session.add(
-                my_sql_stuff.ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
-                                            new_port, service_name))
-            db.session.commit()
-    else:
-        app.logger.info('port doesn\'t exists, good to go')
-        try:
-            db.session.add(
-                my_sql_stuff.ContainerNames(name_of_container, hostname, owner, generate_password_hash(password),
-                                            new_port, service_name))
-            db.session.commit()
-        except Exception as e:
-            app.logger.error('db issue during insert: {0}'.format(e))
-    return new_port
-
-
-def give_me_mount_point(owner, size_plan):
-    """
-    this function will generate a shared tmpfs volume, the size should always be in M
-    let's insert mount points into table, user is unique, every user will have unique mount points
-    """
-    if db.session.query(exists().where(my_sql_stuff.MountPoints.owner == owner)).scalar():
-        # if user exists we will reuse the same volume
-        new_volume = my_sql_stuff.MountPoints.query.filter_by(owner=owner).first()
-        new_volume_str = str(new_volume)
-        app.logger.info('This user has already a volume assigned {0}'.format(new_volume_str[21:]))
-        return new_volume_str[21:]
-    else:
-        # seems this is a new user and we will create a new mount point for him
-        my_random = random_generator_function.generator_instance.random_volume()
-        size = 'size=' + size_plan
-        # this will create a new volume
-        new_volume = make_connection.connect_docker_server().create_volume(name=owner + my_random, driver='local',
-                                                                           driver_opts={'type': 'tmpfs',
-                                                                                        'device': 'tmpfs',
-                                                                                        'o': size})
-
-        new_volume_created = new_volume['Mountpoint'][:-6]
-        new_volume_name = new_volume['Name']
-        app.logger.info(
-            'new volume created:{0} for user:{1} with name {2}'.format(new_volume_created, owner, new_volume_name))
-        db.session.add(my_sql_stuff.MountPoints(owner, new_volume_created, new_volume_name, size_plan))
-        db.session.commit()
-        return str(new_volume['Name'])
-
-
-def swarm_create(name_id, username, password, service, image_name, exec_this, internal_port,
-                 plex_secret_token, plex_server_name):
-    """
-    this function will create a swarm container
-    :param name_id:
-    :param username:
-    :param password:
-    :param service:
-    :param diskspace:
-    :param image_name:
-    :param internal_port:
-    :param exec_this:
-    :param cap_add_value:
-    :param privileged:
-    :param plex_secret_token_plex_server_name:
-    :return:
-    # """
-
-    try:
-        # make a empty dict
-        new_dict_swarm = {}
-        # this loop will generate a dict based on the list from config file and the random
-        # port generated by give_me_something_unique
-        for f in internal_port:
-            new_dict_swarm[give_me_something_unique(name_id, name_id, username, password, service)] = f
-
-        container_specs = docker.types.ContainerSpec(image=image_name, command=exec_this,
-                                                 env={
-                                                     'ACCESS_TOKEN': plex_secret_token,
-                                                     'SERVER_NAME': plex_server_name,
-                                                     'MANUAL_PORT': 3333})
-        task_tmpl = docker.types.TaskTemplate(container_specs)
-        endpoint_spec = docker.types.EndpointSpec(ports=new_dict_swarm)
-        app.logger.info('Generating and inserting in db a new allocated port {0}'.format(new_dict_swarm))
-        svc_id = make_connection.connect_docker_server().create_service(
-            task_tmpl, name=name_id, endpoint_spec=endpoint_spec)
-        app.logger.info('Creating a new swarm container {0}'.format(name_id))
-        svc_info = make_connection.connect_docker_server().inspect_service(svc_id)
-        return svc_info
-    except Exception as e:
-        # this will delete the table raw where added port and name in ContainerNames
-        my_sql_stuff.ContainerNames.query.filter_by(name_of_container=name_id).delete()
-        db.session.commit()
-        app.logger.error('An error occurred creating the swarm container:{0}'.format(e))
-
-
-@celery.task
-def docker_create(name_id, username, password, service, diskspace, image_name, internal_port, exec_this, cap_add_value,
-                  privileged, plex_secret_token, plex_server_name):
-    """
-    this function will create the container
-    :rtype : object
-    :return:
-    """
-    # to the magic, generate unique port, make the shared volume
-    my_new_volume = give_me_mount_point(username, diskspace)
-
-    # making the list of ports from config
-    # appending random values
-    # making a dict of port from config and random ports
-
-    my_new_list = [x + ':' + str(give_me_something_unique(name_id, name_id, username, password, service)) for x in
-                   internal_port]
-    my_dict_port_list = dict(map(str, x.split(':')) for x in my_new_list)
-
-    try:
-        app.logger.info('Generating and inserting in db a new allocated port {0}'.format(my_new_list))
-        where_to_mount = my_new_volume + parser.config_params('mount')['where_to_mount_dir']
-        app.logger.info('We will mount in this location {0}'.format(where_to_mount))
-
-        # here we make the list of ports from confing into a string
-        # and remove / tcp udp
-        # make removed string into a list and use it in ports
-        internal_port_udp_tcp_removed = ''.join(c for c in ' '.join(internal_port) if c not in '/;udp;tcp').split()
-
-        # creating the container
-        response = make_connection.connect_docker_server().create_container(image=image_name, hostname=name_id,
-                                                                            ports=internal_port_udp_tcp_removed,
-                                                                            environment={
-                                                                                'ACCESS_TOKEN': plex_secret_token,
-                                                                                'SERVER_NAME': plex_server_name,
-                                                                                'MANUAL_PORT':
-                                                                                    my_dict_port_list.values()[0]},
-                                                                            host_config=make_connection.connect_docker_server().create_host_config(
-                                                                                cap_add=[cap_add_value],
-                                                                                binds=[where_to_mount],
-                                                                                port_bindings=my_dict_port_list,
-                                                                                privileged=privileged, cpuset_cpus='0',
-                                                                                cpu_period=100000,
-                                                                                mem_limit=parser.config_params(
-                                                                                    'container_settings')['memory']),
-                                                                            command=exec_this, name=name_id)
-        # starting the container
-        make_connection.connect_docker_server().start(container=response.get('Id'))
-
-        result_new_container = make_connection.connect.inspect_container(response.get('Id'))
-        new_hostname = result_new_container['Config']['Hostname']
-        new_name = result_new_container['Name']
-        new_exposed_ports = result_new_container['Config']['ExposedPorts']
-        app.logger.info('New container with hostname {0} and name {1} exposed ports {2} created'.format(new_hostname,
-                                                                                                        new_name,
-                                                                                                        new_exposed_ports))
-        app.logger.info('New container created with id {0}'.format(name_id))
-        return result_new_container
-    except Exception as e:
-        # this will delete the table raw where added port and name in ContainerNames
-        my_sql_stuff.ContainerNames.query.filter_by(name_of_container=name_id).delete()
-        db.session.commit()
-        app.logger.error('An error occurred creating the container:{0}'.format(e))
-
-
-def storage_sum():
-    """
-    function to check storage
-    this will sum up all rows from db
-    this is used just to see how much storage is alocated
-    !!!!NB!!!! Not real space
-    :return:
-    """
-    sql_storage_sum = db.engine.execute(text('select sum(size_plan) from mount'))
-    storage_sum = []
-    for row in sql_storage_sum:
-        storage_sum.append(row[0])
-    return storage_sum
 
 
 @app.route('/api/seedboxes/storage', methods=['GET'])
