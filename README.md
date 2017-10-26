@@ -86,8 +86,8 @@ location_name_db: sqlite:////tmp/test.db
 In order to install db tables
 
 ```python
-from models import db
-db.create_all()
+from models import models
+models.db.create_all()
 ```
 
 #### Docker server settings
