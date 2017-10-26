@@ -243,6 +243,28 @@ def makevm(name_id):
                                                                                   content['options']['service']))
 
 
+    #TODO need to replace the ifs with a json and do something like:
+    #if content['options']['service'] in conn_string:
+    #      image_name = conn_string['connection1']['connection_string_python']
+    #      print 'omfg'
+    # else:
+    # print 'panica no blbal'
+    # cat
+    # test.json
+    # {
+    #     "connection1": {
+    #         "DSN": "con1",
+    #         "UID": "abc",
+    #         "PWD": "1234",
+    #         "connection_string_python": "test1"
+    #     }
+    #     ,
+    #     "connection2": {
+    #         "DSN": "con2",
+    #         "UID": "def",
+    #         "PWD": "1234"
+    #     }
+
     # check if the hostname is valid, should not contain strange stuff
     if not validatehostname.isvalidhostname(name_id):
         raise InvalidUsage('invalid hostname', status_code=404)
