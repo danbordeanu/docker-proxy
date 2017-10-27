@@ -2,7 +2,7 @@ import config_parser as parser
 import paramiko
 import json
 import ast
-
+import base64
 
 # TODO make this as a class
 
@@ -17,7 +17,7 @@ def nodeip(name_id):
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(parser.config_params('sshswarmmaster')['server'], port=22,
                     username=parser.config_params('sshswarmmaster')['user'],
-                    password=parser.config_params('sshswarmmaster')['password'])
+                    password=base64.b64decode(parser.config_params('sshswarmmaster')['password']))
     except paramiko.AuthenticationException:
         print 'issues with the connection'
 

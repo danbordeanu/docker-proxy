@@ -2,6 +2,7 @@ import config_parser as parser
 import docker
 import os
 import pytest
+import logging
 
 
 # from docker import Client
@@ -35,13 +36,14 @@ def connect_docker_server():
     :rtype : object
     :return:
     """
-    server_address = parser.config_params('server')['server_address']
+    server_address = os.environ.get('DOCKER_HOST', parser.config_params('server')['server_address'])
     try:
         cli = docker.APIClient(base_url=server_address)
+        logging.info('Server address used {0}'.format(server_address))
         cli.info()
         return cli
-    except:
-        print 'no connection to the server :('
+    except Exception as e:
+        print 'no connection to the server :( {0}'.format(e)
 
 connect = connect_docker_server()
 

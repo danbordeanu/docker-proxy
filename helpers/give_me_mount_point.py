@@ -16,8 +16,9 @@ def give_me_mount_point(owner, size_plan):
         # if user exists we will reuse the same volume
         new_volume = my_sql_stuff.MountPoints.query.filter_by(owner=owner).first()
         new_volume_str = str(new_volume)
-        app.logger.info('This user has already a volume assigned {0}'.format(new_volume_str[21:]))
-        return new_volume_str[21:]
+        print new_volume_str
+        app.logger.info('This user has already a volume assigned {0}'.format(new_volume_str.split('/')[-1]))
+        return new_volume_str.split('/')[-1]
     else:
         # seems this is a new user and we will create a new mount point for him
         my_random = random_generator_function.generator_instance.random_volume()
