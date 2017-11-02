@@ -6,9 +6,8 @@ from models import models as my_sql_stuff
 from models.models import db
 
 
-
 def swarm_create(name_id, username, password, service, image_name, exec_this, internal_port,
-                 plex_secret_token, plex_server_name):
+                 plex_secret_token, plex_server_name, replicas):
     """
     this function will create a swarm container
     :param name_id:
@@ -22,6 +21,7 @@ def swarm_create(name_id, username, password, service, image_name, exec_this, in
     :param cap_add_value:
     :param privileged:
     :param plex_secret_token_plex_server_name:
+    :param replicas
     :return:
     # """
     app = Flask(__name__)
@@ -33,16 +33,18 @@ def swarm_create(name_id, username, password, service, image_name, exec_this, in
         for f in internal_port:
             new_dict_swarm[give_me_something_unique(name_id, name_id, username, password, service)] = f
 
+
         container_specs = docker.types.ContainerSpec(image=image_name, command=exec_this,
                                                  env={
                                                      'ACCESS_TOKEN': plex_secret_token,
                                                      'SERVER_NAME': plex_server_name,
                                                      'MANUAL_PORT': 3333})
+        replica_mode = docker.types.ServiceMode('replicated', replicas=int(replicas))
         task_tmpl = docker.types.TaskTemplate(container_specs)
         endpoint_spec = docker.types.EndpointSpec(ports=new_dict_swarm)
         app.logger.info('Generating and inserting in db a new allocated port {0}'.format(new_dict_swarm))
         svc_id = make_connection.connect_docker_server().create_service(
-            task_tmpl, name=name_id, endpoint_spec=endpoint_spec)
+            task_tmpl, name=name_id, endpoint_spec=endpoint_spec, mode=replica_mode)
         app.logger.info('Creating a new swarm container {0}'.format(name_id))
         svc_info = make_connection.connect_docker_server().inspect_service(svc_id)
         return svc_info
