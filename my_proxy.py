@@ -20,8 +20,8 @@ from models.models import db
 
 app = Flask(__name__)
 
-app.config['CELERY_BROKER_URL'] = 'redis://lulu:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://lulu:6379/0'
+app.config['CELERY_BROKER_URL'] = 'redis://192.168.98.17:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://192.168.98.17:6379/0'
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
 
@@ -393,7 +393,7 @@ def makevm(name_id):
 def swarm(name_id):
     """
     curl -i -H "secretkey:1234" -H "Content-Type: application/json" -X POST -d '{"username":"dan","password":
-    "123456789", "options": {"diskspace":"500m","service":"ssh"}}' http://localhost:5000/api/seedboxes/swarm/sshdan
+    "123456789", "options": {"diskspace":"500m","service":"ssh", "replicas":"2"}}' http://localhost:5000/api/seedboxes/swarm/sshdan
     this will create a container
     we parse the json data and take username/password and we insert this into db
     :param name_id:
@@ -402,10 +402,13 @@ def swarm(name_id):
     content = request.json
     my_request = json.dumps(content)
 
-    app.logger.info('Username {0}, passwd:{1}, diskspace:{2}, service:{3}'.format(content['username'],
-                                                                                  content['password'],
-                                                                                  content['options']['diskspace'],
-                                                                                  content['options']['service']))
+    app.logger.info('Username {0}, passwd:{1}, diskspace:{2}, service:{3}, replicas:{4}'.format(content['username'],
+                                                                                                content['password'],
+                                                                                                content['options']['diskspace'],
+                                                                                                content['options'][
+                                                                                                    'service'],
+                                                                                                content['options'][
+                                                                                                    'replicas']))
 
 
     # check if the hostname is valid, should not contain strange stuff
@@ -499,7 +502,8 @@ def swarm(name_id):
     else:
         new_container_swarm = swarm_create(name_id, content['username'], content['password'],
                                            content['options']['service'],
-                                           image_name, exec_this, internal_port, plex_secret_token, plex_server_name)
+                                           image_name, exec_this, internal_port, plex_secret_token, plex_server_name,
+                                           content['options']['replicas'])
         print new_container_swarm
         app.logger.info('New swarm container {0} created'.format(new_container_swarm))
 
