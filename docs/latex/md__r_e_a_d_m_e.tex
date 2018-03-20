@@ -1,1 +1,214 @@
-docker proxy 
+This is an A\+PI rest proxy. It\textquotesingle{}s handling P\+U\+T/\+P\+O\+ST requests to handle docker container management
+
+\subsection*{Code Example}
+
+Function creating the container
+
+
+\begin{DoxyCode}
+#creating the container
+        response = make\_connection.connect\_docker\_server().create\_container(image=image\_name,
+       hostname=name\_id,
+                                                                           
+       ports=internal\_port\_udp\_tcp\_removed,
+                                                                            environment=\{'ACCESS\_TOKEN':
+       plex\_secret\_token,
+                                                                                         'SERVER\_NAME':
+       plex\_server\_name,
+                                                                                         'MANUAL\_PORT':
+       my\_dict\_port\_list.values()[0]\},
+                                                                           
+       host\_config=make\_connection.connect\_docker\_server().create\_host\_config(
+                                                                                cap\_add=[cap\_add\_value],
+                                                                                binds=[where\_to\_mount],
+                                                                               
+       port\_bindings=my\_dict\_port\_list,
+                                                                                privileged=privileged,
+       cpuset\_cpus='0', cpu\_period=100000,
+                                                                               
+       mem\_limit=parser.config\_params('container\_settings')['memory']),
+                                                                            command=exec\_this,
+       name=name\_id)
+        #starting the container
+        make\_connection.connect\_docker\_server().start(container=response.get('Id'))
+\end{DoxyCode}
+
+
+Ex\+:
+
+
+\begin{DoxyCode}
+~curl -i -H "secretkey:1234" -H "Content-Type: application/json" -X POST -d
+       '\{"username":"pulifricimare","password": "123456789", "options": 
+
+      \{"diskspace":"512M","service":"plex"\},"plex":\{"plex\_secret\_token":"41Zs4dupjB2KeVskbQyb","plex\_server\_name":"localhost\_test"\}\}' http://localhost:5000/api/seedboxes/new/plex1
+\end{DoxyCode}
+
+
+\subsection*{Motivation}
+
+In order to have full control from a frontend to the docker server, a proxy able to hande a specific set of R\+E\+ST A\+PI calls had to be created
+
+\subsection*{Installation}
+
+Code must be installed in /opt/proxy and runned using gunicorn for better performance
+
+\subsubsection*{Gunicorn}
+
+Sample of gunicorn.\+service file
+
+
+\begin{DoxyCode}
+[Unit]
+Description=gunicorn daemon
+After=network.target
+After=syslog.target
+
+[Service]
+User=sysadmin
+Group=sysadmin
+
+Enviroment=sitedir=/opt/proxy
+ExecStart=/usr/bin/gunicorn --bind 127.0.0.1:4000 --chdir /opt/proxy  wsgi:app --log-file
+       /var/log/gunicorn/gunicorn.log --log-level DEBUG
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true
+\end{DoxyCode}
+ \subsubsection*{Celery support}
+
+Two instances must be started.
+
+
+\begin{DoxyCode}
+celery2 worker -A my\_proxy.celery --loglevel=info
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}
+python my\_proxy.py
+\end{DoxyCode}
+
+
+As a requirement, redis server must be running. Take a loon at
+
+
+\begin{DoxyCode}
+app.config['CELERY\_BROKER\_URL'] = 'redis://192.168.98.17:6379/0'
+app.config['CELERY\_RESULT\_BACKEND'] = 'redis://192.168.98.17:6379/0'
+\end{DoxyCode}
+
+
+\subsubsection*{Database}
+
+\paragraph*{Mysql}
+
+For M\+Y\+S\+QL {\bfseries config.\+ini} must be changed
+
+
+\begin{DoxyCode}
+[dbname]
+location\_name\_db: mysql://proxy\_db\_user:9911@localhost/proxy\_db
+\end{DoxyCode}
+
+
+\paragraph*{Sqlite3}
+
+For sqlite3 {\bfseries config.\+ini} must be changed
+
+
+\begin{DoxyCode}
+[dbname]
+location\_name\_db: sqlite:////tmp/test.db
+\end{DoxyCode}
+
+
+\paragraph*{DB init}
+
+In order to install db tables
+
+
+\begin{DoxyCode}
+from models import models
+models.db.create\_all()
+\end{DoxyCode}
+
+
+\paragraph*{Docker server settings}
+
+Docker server storage must be in $\ast$$\ast$/data/docker$\ast$$\ast$
+
+Sample of the docker.\+service configuration file
+
+
+\begin{DoxyCode}
+[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+After=network.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/dockerd -g /data/docker -H tcp://127.0.0.1:4243 -H unix:///var/run/docker.sock
+       --storage-opt dm.basesize=2048Mb --debug
+ExecReload=/bin/kill -s HUP $MAINPID
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+TasksMax=infinity
+TimeoutStartSec=0
+Delegate=yes
+KillMode=process
+[Install]
+WantedBy=multi-user.target
+\end{DoxyCode}
+
+
+\paragraph*{Ssh login setup}
+
+Ssh login must be enabled for root user (this is used to monitor disk usage of the container volumes)
+
+in {\bfseries config.\+ini}
+
+
+\begin{DoxyCode}
+[ssh]
+user: user
+password: password
+server: 192.168.98.99
+\end{DoxyCode}
+
+
+User {\bfseries must} have read wright in $\ast$$\ast$/data/docker$\ast$$\ast$
+
+\subsection*{A\+PI Reference}
+
+\href{https://docs.google.com/spreadsheets/d/1dNXysy8pBEoM8M0qyzARihbboUXdAt57Yh3Idn2TWXc/edit?pli=1#gid=0}{\tt Api documentation and requests}
+
+\subsection*{Tests}
+
+In order to test the proxy, call curl commands
+
+EX\+:
+
+
+\begin{DoxyCode}
+curl -i -H "secretkey:1234" -H "Content-Type: application/json" -X POST -d '\{"username":"dan","password":
+       "123456789", "options": \{"diskspace":"512M","service":"ssh"\}\}'
+       http://localhost:5000/api/seedboxes/new/ssh1000
+\end{DoxyCode}
+
+
+after, check if instance is running calling\+: {\ttfamily docker ps -\/a}
+
+If instance is running connect to it by using {\ttfamily ssh root@localhost -\/p port\+\_\+value} Password is {\bfseries screencast}
+
+\subsection*{Contributors}
+
+Dan
+
+\subsection*{License}
+
+Use it on your own risk \+:) 
