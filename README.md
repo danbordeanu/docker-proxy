@@ -60,6 +60,27 @@ ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
 PrivateTmp=true
 ```
+### Celery support
+
+Two instances must be started.
+
+```
+celery2 worker -A my_proxy.celery --loglevel=info
+
+```
+
+```
+python my_proxy.py
+
+```
+
+As a requirement, redis server must be running. Take a loon at
+
+```
+app.config['CELERY_BROKER_URL'] = 'redis://192.168.98.17:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://192.168.98.17:6379/0'
+
+```
 
 ### Database
 
